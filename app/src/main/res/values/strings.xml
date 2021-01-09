@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BlueRoseAssignmentApp</string>
     <string name="fact_item_image">Fact item image</string>
+    <string name="fact_database">fact_database</string>
 </resources>
