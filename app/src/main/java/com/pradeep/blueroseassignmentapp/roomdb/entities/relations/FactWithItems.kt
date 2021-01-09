@@ -8,8 +8,8 @@ import com.pradeep.blueroseassignmentapp.roomdb.entities.FactItem
 data class FactWithItems(
     @Embedded val fact: Fact,
     @Relation(
-        parentColumn = "factId",
-        entityColumn = "factItemsId"
+        parentColumn = "title",
+        entityColumn = "factTitle"
     )
     val factItems: List<FactItem>
 )

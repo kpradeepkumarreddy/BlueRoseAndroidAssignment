@@ -16,10 +16,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-        buildFeatures {
-            viewBinding true
-        }
+    buildFeatures {
+        viewBinding true
     }
 
     buildTypes {
@@ -54,10 +54,10 @@ dependencies {
 
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"
-    // For Kotlin use kapt instead of annotationProcessor
     kapt "androidx.room:room-compiler:$room_version"
-    // Test helpers
+    implementation "androidx.room:room-ktx:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
+
 
     def glide_version = "4.11.0"
     implementation "com.github.bumptech.glide:glide:$glide_version"

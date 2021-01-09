@@ -2,12 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
 
     <TextView
         android:id="@+id/tvFactTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,14 +28,15 @@
             android:id="@+id/tvFactDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.60" />
+            android:layout_weight="0.60"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/tvFactImage"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_weight="0.40"
-            android:contentDescription="@string/fact_item_image"/>
+            android:contentDescription="@string/fact_item_image" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

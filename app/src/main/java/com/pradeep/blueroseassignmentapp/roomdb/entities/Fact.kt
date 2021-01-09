@@ -7,8 +7,6 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "facts_table")
 data class Fact(
-    @PrimaryKey(autoGenerate = true) val factId: Int,
+    @PrimaryKey(autoGenerate = false)
     @SerializedName("title") val title: String,
-    @Ignore
-    @SerializedName("rows") val rows: List<FactItem>
 )
