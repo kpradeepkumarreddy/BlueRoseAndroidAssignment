@@ -143,29 +143,44 @@ class FactsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_refresh -> {
-                // refresh the data. Get the latest data and update the view
-                val tempList = ArrayList<FactItem>()
-                tempList.addAll(factsListAdapter.factItems)
-                (factsListAdapter.factItems as ArrayList).clear()
-                factsListAdapter.notifyDataSetChanged()
+                try {
+                    item.isEnabled = false
+                    var tempList: ArrayList<FactItem>? = null
+                    // refresh the data. Get the latest data and update the view
+                    if (factsListAdapter.factItems.isNotEmpty()) {
+                        tempList = ArrayList()
+                        tempList.addAll(factsListAdapter.factItems)
+                        (factsListAdapter.factItems as ArrayList).clear()
+                        factsListAdapter.notifyDataSetChanged()
+                    }
 
-                // notify user that data is being refreshed
-                fragmentFactsBinding.tvNoData.visibility = View.VISIBLE
-                fragmentFactsBinding.tvNoData.text = resources.getString(R.string.refreshing_data)
-                Toast.makeText(
-                    this.context,
-                    resources.getString(R.string.refreshing_data),
-                    Toast.LENGTH_SHORT
-                ).show()
+                    // notify user that data is being refreshed
+                    fragmentFactsBinding.tvNoData.visibility = View.VISIBLE
+                    fragmentFactsBinding.tvNoData.text =
+                        resources.getString(R.string.refreshing_data)
+                    Toast.makeText(
+                        this.context,
+                        resources.getString(R.string.refreshing_data),
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                // make the network request to refresh data
-                factsViewModel.getFacts()
+                    // make the network request to refresh data
+                    factsViewModel.getFacts()
 
-                Handler(Looper.getMainLooper()).postDelayed({
-                    fragmentFactsBinding.tvNoData.visibility = View.GONE
-                    factsListAdapter.factItems = tempList
-                    factsListAdapter.notifyDataSetChanged()
-                }, 1000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if (tempList == null) {
+                            fragmentFactsBinding.tvNoData.text =
+                                resources.getString(R.string.no_data)
+                        } else {
+                            fragmentFactsBinding.tvNoData.visibility = View.GONE
+                            factsListAdapter.factItems = tempList
+                            factsListAdapter.notifyDataSetChanged()
+                        }
+                        item.isEnabled = true
+                    }, 1500)
+                } catch (ex: Exception) {
+                    Log.e("log", "Exception in onOptionsItemSelected() = ", ex)
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
