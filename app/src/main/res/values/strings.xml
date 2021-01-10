@@ -7,4 +7,5 @@
     <string name="no_data">No data, enable internet and click refresh</string>
     <string name="fetching_data">Please wait, fetching data</string>
     <string name="refreshing_data">Refreshing data</string>
+    <string name="base_url">https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/</string>
 </resources>

@@ -4,25 +4,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.pradeep.blueroseassignmentapp.apis.FactApi
-import com.pradeep.blueroseassignmentapp.models.Facts
 import com.pradeep.blueroseassignmentapp.roomdb.FactRoomDB
 import com.pradeep.blueroseassignmentapp.roomdb.entities.Fact
 import com.pradeep.blueroseassignmentapp.roomdb.entities.FactItem
-import com.pradeep.blueroseassignmentapp.roomdb.entities.relations.FactWithItems
 import com.pradeep.blueroseassignmentapp.ui.fragments.FactsFragment
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
 // instead of the whole database, because you only need access to the DAO
-class FactRepository(private val factDB: FactRoomDB) {
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val factsApi = retrofit.create(FactApi::class.java)
+@Singleton
+class FactRepository @Inject constructor(
+    private val factDB: FactRoomDB, private val factsApi: FactApi
+) {
     private val errorCode = MutableLiveData<Int>()
 
     // Room executes all queries on a separate thread.

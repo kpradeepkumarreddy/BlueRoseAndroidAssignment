@@ -1,6 +1,5 @@
 package com.pradeep.blueroseassignmentapp.ui.fragments
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,18 +7,16 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.pradeep.blueroseassignmentapp.FactsApplication
 import com.pradeep.blueroseassignmentapp.R
 import com.pradeep.blueroseassignmentapp.adapters.FactsListAdapter
 import com.pradeep.blueroseassignmentapp.databinding.FragmentFactsBinding
-import com.pradeep.blueroseassignmentapp.repositories.FactRepository
 import com.pradeep.blueroseassignmentapp.roomdb.entities.FactItem
 import com.pradeep.blueroseassignmentapp.viewmodels.FactsViewModel
-import com.pradeep.blueroseassignmentapp.viewmodels.FactsViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -32,12 +29,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FactsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class FactsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var factsViewModel: FactsViewModel
+    private val factsViewModel: FactsViewModel by activityViewModels()
+
     lateinit var fragmentFactsBinding: FragmentFactsBinding
     private val factsListAdapter = FactsListAdapter(listOf())
 
@@ -52,11 +51,6 @@ class FactsFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
         setHasOptionsMenu(true)
-        val factsRepository =
-            FactRepository((requireActivity().application as FactsApplication).factsDatabase)
-        val factsViewModelFactory = FactsViewModelFactory(factsRepository)
-        factsViewModel =
-            ViewModelProvider(this, factsViewModelFactory).get(FactsViewModel::class.java)
     }
 
     override fun onCreateView(
