@@ -15,21 +15,26 @@ class FactsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityFactsBinding = ActivityFactsBinding.inflate(layoutInflater)
-        setContentView(activityFactsBinding.root)
-        setSupportActionBar(activityFactsBinding.factsToolbar)
+        try {
+            activityFactsBinding = ActivityFactsBinding.inflate(layoutInflater)
+            setContentView(activityFactsBinding.root)
+            setSupportActionBar(activityFactsBinding.factsToolbar)
 
-        val factsRepository = FactRepository((application as FactsApplication).factsDatabase)
-        val factsViewModelFactory = FactsViewModelFactory(factsRepository)
-        val factsViewModel: FactsViewModel =
-            ViewModelProvider(this, factsViewModelFactory).get(FactsViewModel::class.java)
+            val factsRepository = FactRepository((application as FactsApplication).factsDatabase)
+            val factsViewModelFactory = FactsViewModelFactory(factsRepository)
+            val factsViewModel: FactsViewModel =
+                ViewModelProvider(this, factsViewModelFactory).get(FactsViewModel::class.java)
 
-        // make the network request when the app is opened
-        factsViewModel.getFacts()
+            factsViewModel.factsFromDB.observe(this) {
+                Log.d("log", "In FactsActivity = $it")
+                activityFactsBinding.factsToolbar.title = it?.title
+            }
 
-        factsViewModel.factsFromDB.observe(this) {
-            Log.d("log", "In FactsActivity = $it")
-           activityFactsBinding.factsToolbar.title = it?.title
+            // make the network request when the app is opened
+            factsViewModel.getFacts()
+
+        } catch (ex: Exception) {
+            Log.e("log", "Exception in FactsActivity::onCreate() = ", ex)
         }
     }
 }

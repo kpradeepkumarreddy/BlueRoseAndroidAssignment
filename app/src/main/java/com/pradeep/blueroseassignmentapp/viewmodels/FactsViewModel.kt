@@ -14,14 +14,14 @@ class FactsViewModel(private val factRepository: FactRepository) : ViewModel() {
     // - Repository is completely separated from the UI through the ViewModel.
     val factsFromDB: LiveData<Fact> = factRepository.factsFromDB
     val allFactItems: LiveData<List<FactItem>> = factRepository.allFactItems
+    val errorStatus: LiveData<Int> = factRepository.getErrorStatus()
 
-    fun getFacts(){
-        viewModelScope.launch(Dispatchers.IO){
+    fun getFacts() {
+        viewModelScope.launch(Dispatchers.IO) {
             factRepository.getFacts()
         }
     }
 }
-
 
 class FactsViewModelFactory(private val factRepository: FactRepository) :
     ViewModelProvider.Factory {

@@ -3,4 +3,8 @@
     <string name="fact_item_image">Fact item image</string>
     <string name="fact_database">fact_database</string>
     <string name="refresh">refresh</string>
+    <string name="no_internet">No internet</string>
+    <string name="no_data">No data, enable internet and click refresh</string>
+    <string name="fetching_data">Please wait, fetching data</string>
+    <string name="refreshing_data">Refreshing data</string>
 </resources>

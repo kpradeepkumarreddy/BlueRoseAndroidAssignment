@@ -1,8 +1,12 @@
 package com.pradeep.blueroseassignmentapp.ui.fragments
 
+import android.opengl.Visibility
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -13,6 +17,7 @@ import com.pradeep.blueroseassignmentapp.R
 import com.pradeep.blueroseassignmentapp.adapters.FactsListAdapter
 import com.pradeep.blueroseassignmentapp.databinding.FragmentFactsBinding
 import com.pradeep.blueroseassignmentapp.repositories.FactRepository
+import com.pradeep.blueroseassignmentapp.roomdb.entities.FactItem
 import com.pradeep.blueroseassignmentapp.viewmodels.FactsViewModel
 import com.pradeep.blueroseassignmentapp.viewmodels.FactsViewModelFactory
 
@@ -34,6 +39,11 @@ class FactsFragment : Fragment() {
 
     private lateinit var factsViewModel: FactsViewModel
     lateinit var fragmentFactsBinding: FragmentFactsBinding
+    private val factsListAdapter = FactsListAdapter(listOf())
+
+    enum class ErrorCodes {
+        NO_INTERNET
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,15 +76,42 @@ class FactsFragment : Fragment() {
         val itemDecoration: ItemDecoration =
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         fragmentFactsBinding.rvFacts.addItemDecoration(itemDecoration)
-        val factsListAdapter = FactsListAdapter(listOf())
+
         fragmentFactsBinding.rvFacts.adapter = factsListAdapter
 
         factsViewModel.allFactItems.observe(viewLifecycleOwner) {
-            Log.d("log", "In FactsFragment = $it")
+            Log.d("log", "In FactsFragment, allFactItems = $it")
             // set the recyclerview adapter
-            it?.apply {
-                factsListAdapter.factItems = it
-                factsListAdapter.notifyDataSetChanged()
+            it?.let {
+                if (it.isEmpty()) {
+                    // show no data to display text
+                    fragmentFactsBinding.tvNoData.text = resources.getString(R.string.fetching_data)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if (it.isEmpty()) {
+                            fragmentFactsBinding.tvNoData.text =
+                                resources.getString(R.string.no_data)
+                        }
+                    }, 5000)
+                } else {
+                    fragmentFactsBinding.tvNoData.visibility = View.GONE
+                    factsListAdapter.factItems = it
+                    factsListAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+        factsViewModel.errorStatus.observe(viewLifecycleOwner) {
+            Log.d("log", "In FactsFragment, errorStatus = $it")
+            // show toast
+            if (it == ErrorCodes.NO_INTERNET.ordinal) {
+                Log.d("log", "no internet error code, show toast")
+                Toast.makeText(
+                    this.context,
+                    resources.getString(R.string.no_internet),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Log.d("log", "unrecognized error code")
             }
         }
     }
@@ -107,6 +144,28 @@ class FactsFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_refresh -> {
                 // refresh the data. Get the latest data and update the view
+                val tempList = ArrayList<FactItem>()
+                tempList.addAll(factsListAdapter.factItems)
+                (factsListAdapter.factItems as ArrayList).clear()
+                factsListAdapter.notifyDataSetChanged()
+
+                // notify user that data is being refreshed
+                fragmentFactsBinding.tvNoData.visibility = View.VISIBLE
+                fragmentFactsBinding.tvNoData.text = resources.getString(R.string.refreshing_data)
+                Toast.makeText(
+                    this.context,
+                    resources.getString(R.string.refreshing_data),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                // make the network request to refresh data
+                factsViewModel.getFacts()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    fragmentFactsBinding.tvNoData.visibility = View.GONE
+                    factsListAdapter.factItems = tempList
+                    factsListAdapter.notifyDataSetChanged()
+                }, 1000)
                 true
             }
             else -> super.onOptionsItemSelected(item)

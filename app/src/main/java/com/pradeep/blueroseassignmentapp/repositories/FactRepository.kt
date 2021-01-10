@@ -9,6 +9,7 @@ import com.pradeep.blueroseassignmentapp.roomdb.FactRoomDB
 import com.pradeep.blueroseassignmentapp.roomdb.entities.Fact
 import com.pradeep.blueroseassignmentapp.roomdb.entities.FactItem
 import com.pradeep.blueroseassignmentapp.roomdb.entities.relations.FactWithItems
+import com.pradeep.blueroseassignmentapp.ui.fragments.FactsFragment
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -22,6 +23,7 @@ class FactRepository(private val factDB: FactRoomDB) {
         .build()
 
     private val factsApi = retrofit.create(FactApi::class.java)
+    private val errorCode = MutableLiveData<Int>()
 
     // Room executes all queries on a separate thread.
     // Observed Flow will notify the observer when the data has changed.
@@ -29,12 +31,17 @@ class FactRepository(private val factDB: FactRoomDB) {
     val allFactItems: LiveData<List<FactItem>> = factDB.factItemDao().getFactItems()
 
     suspend fun getFacts() {
-        // make the network request and get the data. And write the data to RoomDB
-        val facts = factsApi.getFacts()
-        Log.d("log", "factsApi response = $facts")
-        // write the data to RoomDB
-        insertToFactTable(Fact(facts.title))
-        insertToFactItemsTable(facts.title, facts.rows)
+        try {
+            // make the network request and get the data. And write the data to RoomDB
+            val facts = factsApi.getFacts()
+            Log.d("log", "factsApi response = $facts")
+            // write the data to RoomDB
+            insertToFactTable(Fact(facts.title))
+            insertToFactItemsTable(facts.title, facts.rows)
+        } catch (ex: Exception) {
+            Log.e("log", "Exception in FactRepository::getFacts() = ", ex)
+            errorCode.postValue(FactsFragment.ErrorCodes.NO_INTERNET.ordinal)
+        }
     }
 
     private suspend fun insertToFactItemsTable(factTitle: String, factItems: List<FactItem>) {
@@ -46,5 +53,9 @@ class FactRepository(private val factDB: FactRoomDB) {
 
     private suspend fun insertToFactTable(fact: Fact) {
         factDB.factDao().insert(fact)
+    }
+
+    fun getErrorStatus(): MutableLiveData<Int> {
+        return errorCode
     }
 }

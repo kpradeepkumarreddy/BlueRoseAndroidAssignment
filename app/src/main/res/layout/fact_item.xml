@@ -32,11 +32,13 @@
             android:textSize="16sp" />
 
         <ImageView
-            android:id="@+id/tvFactImage"
+            android:id="@+id/ivFactImage"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="110dp"
+            android:layout_marginLeft="10dp"
             android:layout_weight="0.40"
-            android:contentDescription="@string/fact_item_image" />
+            android:contentDescription="@string/fact_item_image"
+            android:layout_marginStart="10dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
