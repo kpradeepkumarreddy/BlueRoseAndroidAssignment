@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "fact_items_table")
 data class FactItem(
-    var factTitle: String,
     @PrimaryKey(autoGenerate = false)
     @NotNull
     @SerializedName("title") val title: String,

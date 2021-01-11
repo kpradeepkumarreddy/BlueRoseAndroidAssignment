@@ -15,13 +15,13 @@ class FactsViewModel @ViewModelInject constructor(private val factRepository: Fa
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    val factsFromDB: LiveData<Fact> = factRepository.factsFromDB
-    val allFactItems: LiveData<List<FactItem>> = factRepository.allFactItems
-    val errorStatus: LiveData<Int> = factRepository.getErrorStatus()
+    val observableFactTitle: LiveData<Fact> = factRepository.getFactTitle()
+    val observableFactItems: LiveData<List<FactItem>> = factRepository.getAllFactItems()
+    val observableErrorStatus: LiveData<Int> = factRepository.getErrorStatus()
 
-    fun getFacts() {
+    fun getFactsFromNetwork() {
         viewModelScope.launch(Dispatchers.IO) {
-            factRepository.getFacts()
+            factRepository.getFactsFromNetwork()
         }
     }
 }

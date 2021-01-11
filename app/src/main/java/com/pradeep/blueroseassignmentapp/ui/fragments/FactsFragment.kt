@@ -15,6 +15,7 @@ import com.pradeep.blueroseassignmentapp.R
 import com.pradeep.blueroseassignmentapp.adapters.FactsListAdapter
 import com.pradeep.blueroseassignmentapp.databinding.FragmentFactsBinding
 import com.pradeep.blueroseassignmentapp.roomdb.entities.FactItem
+import com.pradeep.blueroseassignmentapp.utils.Constants
 import com.pradeep.blueroseassignmentapp.viewmodels.FactsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,10 +40,6 @@ class FactsFragment : Fragment() {
 
     lateinit var fragmentFactsBinding: FragmentFactsBinding
     private val factsListAdapter = FactsListAdapter(listOf())
-
-    enum class ErrorCodes {
-        NO_INTERNET
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +70,7 @@ class FactsFragment : Fragment() {
 
         fragmentFactsBinding.rvFacts.adapter = factsListAdapter
 
-        factsViewModel.allFactItems.observe(viewLifecycleOwner) {
+        factsViewModel.observableFactItems.observe(viewLifecycleOwner) {
             Log.d("log", "In FactsFragment, allFactItems = $it")
             // set the recyclerview adapter
             it?.let {
@@ -94,10 +91,10 @@ class FactsFragment : Fragment() {
             }
         }
 
-        factsViewModel.errorStatus.observe(viewLifecycleOwner) {
+        factsViewModel.observableErrorStatus.observe(viewLifecycleOwner) {
             Log.d("log", "In FactsFragment, errorStatus = $it")
             // show toast
-            if (it == ErrorCodes.NO_INTERNET.ordinal) {
+            if (it == Constants.ErrorCodes.NO_INTERNET.ordinal) {
                 Log.d("log", "no internet error code, show toast")
                 Toast.makeText(
                     this.context,
@@ -159,7 +156,7 @@ class FactsFragment : Fragment() {
                     ).show()
 
                     // make the network request to refresh data
-                    factsViewModel.getFacts()
+                    factsViewModel.getFactsFromNetwork()
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (tempList == null) {

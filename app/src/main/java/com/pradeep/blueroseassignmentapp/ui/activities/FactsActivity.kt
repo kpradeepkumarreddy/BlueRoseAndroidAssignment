@@ -21,13 +21,13 @@ class FactsActivity : AppCompatActivity() {
             setContentView(activityFactsBinding.root)
             setSupportActionBar(activityFactsBinding.factsToolbar)
 
-            factsViewModel.factsFromDB.observe(this) {
+            factsViewModel.observableFactTitle.observe(this) {
                 Log.d("log", "In FactsActivity = $it")
                 activityFactsBinding.factsToolbar.title = it?.title
             }
 
             // make the network request when the app is opened
-            factsViewModel.getFacts()
+            factsViewModel.getFactsFromNetwork()
 
         } catch (ex: Exception) {
             Log.e("log", "Exception in FactsActivity::onCreate() = ", ex)
