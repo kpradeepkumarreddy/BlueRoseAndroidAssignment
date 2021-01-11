@@ -36,7 +36,7 @@ class FactsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private val factsViewModel: FactsViewModel by activityViewModels()
+    val factsViewModel: FactsViewModel by activityViewModels()
 
     lateinit var fragmentFactsBinding: FragmentFactsBinding
     private val factsListAdapter = FactsListAdapter(listOf())
